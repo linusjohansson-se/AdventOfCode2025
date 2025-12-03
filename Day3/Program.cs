@@ -22,31 +22,35 @@ foreach (string battery in batteryBank)
     {
         positions.Add(i, int.Parse(battery[i].ToString()));
     }
-    
-    var highestNumber = positions.OrderByDescending(x => x.Value).ThenBy(x => x.Key).First();
 
-    int pos1 = 0;
-    int pos2 = 0;
+    int allowedCellsCount = 12; // Set to 2 for part 1 and 12 for part 2
     
-    if (highestNumber.Key == battery.Length - 1)
+    List<int> orderedValues = new List<int>();
+    
+    int start = 0;
+    for (int i = allowedCellsCount; i > 0; i--)
     {
-        pos2 = highestNumber.Value;
-        pos1 = positions.Where(x => x.Key < highestNumber.Key).OrderByDescending(x => x.Value).First().Value;
+        var highestNumber = positions.Where(x => x.Key >= start)
+            .OrderByDescending(x => x.Value)
+            .ThenBy(x => x.Key)
+            .First(x => battery.Length - i >= x.Key);
+        orderedValues.Add(highestNumber.Value);
+        start = highestNumber.Key + 1;
     }
-    else
+
+    string totalJoltage = "";
+    
+    foreach (var value in orderedValues)
     {
-        pos1 = highestNumber.Value;
-        pos2 = positions.Where(x => x.Key > highestNumber.Key).OrderByDescending(x => x.Value).First().Value;
+        totalJoltage = $"{totalJoltage}{value}";
     }
+    Console.WriteLine(totalJoltage);
     
     joltages.Add(new BatteryJoltage
     {
-        Pos1 = pos1,
-        Pos2 = pos2,
-        TotalJoltage = int.Parse($"{pos1}{pos2}")
+        OrderedValues = orderedValues,
+        TotalJoltage = long.Parse(totalJoltage)
     });
-    
-    Console.WriteLine($"{pos1}{pos2}");
 }
 
 long sum = joltages.Sum(x => x.TotalJoltage);
@@ -54,7 +58,6 @@ Console.WriteLine($"{sum}");
 
 class BatteryJoltage
 {
-    public int Pos1 = 0;
-    public int Pos2 = 0;
-    public int TotalJoltage = 0;
+    public List<int> OrderedValues = new List<int>();
+    public long TotalJoltage = 0;
 }
