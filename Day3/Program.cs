@@ -23,7 +23,7 @@ foreach (string battery in batteryBank)
         positions.Add(i, int.Parse(battery[i].ToString()));
     }
 
-    int allowedCellsCount = 12; // Set to 2 for part 1 and 12 for part 2
+    int allowedCellsCount = 12; // Set to 2 for part one and 12 for part two
     
     List<int> orderedValues = new List<int>();
     
